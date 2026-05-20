@@ -49,7 +49,8 @@ void encoderSetup() {
   encoder.setEncoderType(EncoderType::HAS_PULLUP);
   encoder.setBoundaries(1, 10, true);
   encoder.onTurned( [](long value) {
-    Serial.printf("Value: %ld\n", value);
+    //Serial.printf("Value: %ld\n", value);
+    Serial.printf("Level: %ld\n", 11-value);
   });
   encoder.begin();
 };

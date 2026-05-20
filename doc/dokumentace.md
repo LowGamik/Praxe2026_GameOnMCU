@@ -3,9 +3,13 @@
 Material použit:
 - ESP32-WROOM-32
 - Piezobzučák
+> použit na detekci vystřelu
 - Joystick
+> pohyb kurzoru
 - LED Matrix
+> mapa s kurzorem a dotem
 - Rotační Encoder
+> obtížnost pohybu dotu (500ms/level)
 
 ## PROBLEMY
 - Zapojení LED Matrix do boot pinů

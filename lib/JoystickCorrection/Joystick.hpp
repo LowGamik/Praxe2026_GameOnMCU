@@ -3,7 +3,6 @@
 
 class Joystick{
     private:
-        int deadzone = 1000;
         int xValue;
         int yValue;
         bool swValue;
@@ -16,9 +15,6 @@ class Joystick{
         int getX();
         int getY();
         bool getSW();
-        
-
-
 };
 
 #endif // JOYSTICK_HPP

@@ -17,7 +17,35 @@
 #define JOYSTICK_X 34
 #define JOYSTICK_Y 35
 
+class Cursor{
+    private:
+        int xPos;
+        int yPos;
+    public:
+        Cursor(int x = 4, int y = 4);
+        void setXPos(int x);
+        void setYPos(int y);
+        int getXPos();
+        int getYPos();
+};
+
+class Projectile{
+    private:
+        int xPos;
+        int yPos;
+    public:
+        Projectile(int x = 0, int y = 0);
+};
+
+class MyTimer{
+    private:
+        unsigned long timeOfChange;
+    public:
+        MyTimer();
+        bool hasTimePassed(unsigned long time);
+};
 
 void testDisplay(MATRIX7219* display);
+void displayGame(MATRIX7219* display, Cursor* cursor, int movX, int movY);
 
 #endif // UTILS_HPP

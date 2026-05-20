@@ -4,6 +4,7 @@
 #include <Joystick.hpp>
 #include "utils.hpp"
 
+Cursor cursor;
 MATRIX7219 display(DATA_PIN, SELECT_PIN, CLOCK_PIN, NUM_DEVICES);
 RotaryEncoder encoder(ENCODE_DATA_PIN, ENCODE_CLOCK_PIN);
 Joystick joystick(JOYSTICK_X, JOYSTICK_Y, JOYSTICK_SW);
@@ -21,8 +22,8 @@ void setup() {
 
 void loop() {
   joystick.update();
-  Serial.printf("X: %d, Y: %d, SW: %d\n", joystick.getX(), joystick.getY(), joystick.getSW());
-
+  //Serial.printf("X: %d, Y: %d, SW: %d\n", joystick.getX(), joystick.getY(), joystick.getSW());
+  displayCursor(&display, &cursor, joystick.getX(), joystick.getY());
   if(digitalRead(BUTTON_PIN)==0){
     digitalWrite(BUZZ_PIN, 1);
   }else{
@@ -43,7 +44,7 @@ void encoderSetup() {
   encoder.setEncoderType(EncoderType::HAS_PULLUP);
   encoder.setBoundaries(1, 10, true);
   encoder.onTurned( [](long value) {
-    //Serial.printf("Value: %ld\n", value);
+    Serial.printf("Value: %ld\n", value);
   });
   encoder.begin();
 };

@@ -20,11 +20,23 @@ void Joystick::update() {
 }
 
 int Joystick::getX() {
-    return xValue;
+    if(xValue > 2500) {
+        return -1;
+    }else if(xValue < 1500) {
+        return 1;
+    }else {
+        return 0;
+    }
 }
 
 int Joystick::getY() {
-    return yValue;
+    if(yValue > 2500) {
+        return -1;
+    }else if(yValue < 1500) {
+        return 1;
+    }else {
+        return 0;
+    }
 }
 
 bool Joystick::getSW() {

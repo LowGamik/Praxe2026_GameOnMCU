@@ -16,10 +16,6 @@ Material použit:
 
 - Přesnost os na Joysticku
 > Další problém jsme měli s přesností s osami "x" a "y", neboli když "x" bylo 1, tak "y" bylo taky 1, když nebyla pozice diagonální. Vyřešeno bylo způsobem změnšení vstupu napětí z 5V na 3.3V
-boot piny nejsou dobre na komunikaci ig 
 
-nemeli jsme zapojeny ground pin (a aji tak to svitilo jakoze wtf) ig
-
-joystick pouziva, a to prosimvas cituji, 3.3V ne 5V, jinak ma polovinu pohybu deadzonu
-
-prepisovani radku bo jsme kokoti
+- Přepisování kurzoru
+> Problém byl v top že jsme kreslili kurzor strukturovaně (takzvaně. 1. řádek, 2. řádek, 3. řádek, 2. řádek), a se to pokažde přepsalo. Vyřešení bylo vyměnit celý strukturováný výkres za 2D pole, na kterém jsme mohli rozšiřovat i na projektily.

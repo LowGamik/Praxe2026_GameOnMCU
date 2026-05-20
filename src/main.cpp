@@ -20,6 +20,7 @@ void setup() {
   displaySetup();
   encoderSetup();
   testDisplay(&display);
+  projectile.RandStart();
 }
 
 void loop() {

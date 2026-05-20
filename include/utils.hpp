@@ -16,7 +16,9 @@
 #define JOYSTICK_SW 32
 #define JOYSTICK_X 34
 #define JOYSTICK_Y 35
-
+/**
+ * An enum representing the possible directions of movement for the projectile. It is used to determine how the projectile moves when the move function is called.
+ */
 enum DirState{
     UP,
     DOWN,
@@ -24,7 +26,9 @@ enum DirState{
     RIGHT,
     NONE
 };
-
+/**
+ * A class representing the cursor in the game. It has a position.
+ */
 class Cursor{
     private:
         int xPos;
@@ -36,23 +40,28 @@ class Cursor{
         int getXPos();
         int getYPos();
 };
-
+/**
+ * A class representing the projectile in the game. It has a position and a direction. The move function updates the position based on the direction. The RandStart function sets a random starting position and direction for the projectile.
+ */
 class Projectile{
     private:
         int xPos;
         int yPos;
-        int xDir = 1;
-        //int yDir;
-        //DirState dir;
+        int xDir = 0;
+        int yDir = 0;
+        DirState dir;
     public:
-        Projectile(int x = 0, int y = 0/*DirState dir = NONE*/);
+        Projectile(int x = 0, int y = 0);
         int getXPos();
         int getYPos();
         void setXPos(int xDir);
-        //void setYDir(int yDir);
+        void setYPos(int yDir);
         void move();
+        void RandStart();
 };
-
+/**
+ * A simple timer class that can be used to check if a certain amount of time has passed since the last change. It is used to control the speed of the projectile and the movement of the cursor.
+ */
 class MyTimer{
     private:
         unsigned long timeOfChange;
@@ -60,16 +69,19 @@ class MyTimer{
         MyTimer();
         bool hasTimePassed(unsigned long time);
 };
-
+/**
+ * @param display - pointer to the display object
+ */
 void testDisplay(MATRIX7219* display);
-/**¨
+/**
  * @param display - pointer to the display object
  * @param cursor - pointer to the cursor object
  * @param movX -1, 0 or 1 depending on the direction of movement
  * @param movY -1, 0 or 1 depending on the direction of movement
  * @param level 1-10 depending on the difficulty level, determines the speed of the projectile
- * 
+ * @param switchState - state of the switch
  */
 void displayGame(MATRIX7219* display, Cursor* cursor, Projectile* projectile, MyTimer *timer, int movX, int movY, int level = 1, int switchState = 0);
+DirState intToDirState(int number);
 
 #endif // UTILS_HPP

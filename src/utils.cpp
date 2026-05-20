@@ -56,13 +56,10 @@ void displayGame(MATRIX7219* display, Cursor* cursor, Projectile* projectile, My
         newY = 6;
     }
     
-    if(timer->hasTimePassed(1000/level)) {
+    if(timer->hasTimePassed(500/level)) {
         projectile->move();
     }
 
-    if(projectile->getXPos() >= 8) {
-        projectile->setXPos(0);
-    }
     positions[projectile->getYPos()][projectile->getXPos()] = 1;
 
     cursor->setXPos(newX);
@@ -85,6 +82,7 @@ void displayGame(MATRIX7219* display, Cursor* cursor, Projectile* projectile, My
     if(switchState == 1) {
        if(cursor->getXPos() == projectile->getXPos() && cursor->getYPos() == projectile->getYPos()) {
             Serial.println("Hit!");
+            projectile->RandStart();
         }
     }
 }
@@ -103,10 +101,9 @@ bool MyTimer::hasTimePassed(unsigned long time) {
     }
 }
 
-Projectile::Projectile(int x, int y/*DirState dir*/) {
+Projectile::Projectile(int x, int y) {
     xPos = x;
     yPos = y;
-    //this->dir = dir;
 }
 
 int Projectile::getXPos() {
@@ -119,10 +116,84 @@ int Projectile::getYPos() {
 
 void Projectile::move() {
     xPos += xDir;
-    //yPos += yDir;
+    yPos += yDir;
+
+    if(DirState::UP == dir) {
+        if(yPos < 0) {
+            yPos = 0;
+            dir = DirState::DOWN;
+            yDir = -yDir;
+        }
+    } else if(DirState::DOWN == dir) {
+        if(yPos > 7) {
+            yPos = 7;
+            dir = DirState::UP;
+            yDir = -yDir;
+        }
+    } else if(DirState::LEFT == dir) {
+        if(xPos < 0) {
+            xPos = 0;
+            dir = DirState::RIGHT;
+            xDir = -xDir;
+        }
+    } else if(DirState::RIGHT == dir) {
+        if(xPos > 7) {
+            xPos = 7;
+            dir = DirState::LEFT;
+            xDir = -xDir;
+        }
+    }
 }
 
 void Projectile::setXPos(int xDir) {
     this->xPos = xDir;
 }
 
+void Projectile::setYPos(int yDir) {
+    this->yPos = yDir;
+}
+
+void Projectile::RandStart() {
+    this->dir = intToDirState(random(0, 4));
+    switch(this->dir) {
+        case UP:
+            xPos = random(1, 6);
+            yPos = 0;
+            xDir = 0;
+            yDir = -1;
+            break;
+        case DOWN:
+            xPos = random(1, 6);
+            yPos = 7;
+            xDir = 0;
+            yDir = 1;
+            break;
+        case LEFT:
+            xPos = 7;
+            yPos = random(1, 6);
+            xDir = -1;
+            yDir = 0;
+            break;
+        case RIGHT:
+            xPos = 0;
+            yPos = random(1, 6);
+            xDir = 1;
+            yDir = 0;
+            break;
+        default:
+            xPos = random(1, 6);
+            yPos = random(1, 6);
+            xDir = 0;
+            yDir = 0;
+    }
+}
+
+DirState intToDirState(int number){
+    switch(number){
+        case 0: return UP;
+        case 1: return DOWN;
+        case 2: return LEFT;
+        case 3: return RIGHT;
+        default: return NONE;
+    }
+}

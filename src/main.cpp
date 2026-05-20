@@ -49,8 +49,9 @@ void encoderSetup() {
   encoder.setEncoderType(EncoderType::HAS_PULLUP);
   encoder.setBoundaries(1, 10, true);
   encoder.onTurned( [](long value) {
+    Serial.println("\033[2J");
     //Serial.printf("Value: %ld\n", value);
-    Serial.printf("Level: %ld\n", 11-value);
+    Serial.printf("Current difficulty: %ld\n", value);
   });
   encoder.begin();
 };

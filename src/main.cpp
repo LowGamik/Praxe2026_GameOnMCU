@@ -1,18 +1,30 @@
 #include <Arduino.h>
+#include <MATRIX7219.h>
+#include <Joystick.hpp>
+#include "utils.hpp"
 
-// put function declarations here:
-int myFunction(int, int);
+MATRIX7219 display(DATA_PIN, SELECT_PIN, CLOCK_PIN, NUM_DEVICES);
+void displaySetup();
 
 void setup() {
-  // put your setup code here, to run once:
-  int result = myFunction(2, 3);
+  pinMode(BUTTON_PIN, INPUT_PULLUP);
+  pinMode(BUZZ_PIN, OUTPUT);
+  displaySetup();
+  testDisplay(&display);
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
+  if(digitalRead(BUTTON_PIN)==0){
+    digitalWrite(BUZZ_PIN, 1);
+  }else{
+    digitalWrite(BUZZ_PIN, 0);
+  }
 }
 
-// put function definitions here:
-int myFunction(int x, int y) {
-  return x + y;
+void displaySetup() {
+  display.begin();
+  display.clear();
+  display.displayOn();
+  //display.setSwap(true);
+  display.setBrightness(1);
 }

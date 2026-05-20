@@ -13,6 +13,8 @@ MyTimer timer;
 void displaySetup();
 void encoderSetup();
 
+unsigned long points = 0;
+
 void setup() {
   Serial.begin(9600);
   pinMode(BUTTON_PIN, INPUT_PULLUP);
@@ -26,7 +28,7 @@ void setup() {
 void loop() {
   joystick.update();
   //Serial.printf("X: %d, Y: %d, SW: %d\n", joystick.getX(), joystick.getY(), joystick.getSW());
-  displayGame(&display, &cursor, &projectile, &timer, joystick.getX(), joystick.getY(), encoder.getEncoderValue(), joystick.getSW());
+  displayGame(&display, &cursor, &projectile, &timer, joystick.getX(), joystick.getY(), &points, encoder.getEncoderValue(), joystick.getSW());
   if(digitalRead(BUTTON_PIN)==0){
     digitalWrite(BUZZ_PIN, 1);
   }else{

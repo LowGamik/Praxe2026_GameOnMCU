@@ -31,7 +31,7 @@ int Cursor::getYPos() {
     return yPos;
 }
 
-void displayGame(MATRIX7219* display, Cursor* cursor, Projectile* projectile, MyTimer *timer, int movX, int movY, int level, int switchState) {
+void displayGame(MATRIX7219* display, Cursor* cursor, Projectile* projectile, MyTimer *timer, int movX, int movY, unsigned long *pointPTR, int level, int switchState) {
     static MyTimer moveTimer;
     int positions[8][8] = {0};
     static int newX = 0;
@@ -81,7 +81,10 @@ void displayGame(MATRIX7219* display, Cursor* cursor, Projectile* projectile, My
 
     if(switchState == 1) {
        if(cursor->getXPos() == projectile->getXPos() && cursor->getYPos() == projectile->getYPos()) {
+            Serial.println("\033[2J"); // Clear console
             Serial.println("Hit!");
+            (*pointPTR)++;
+            Serial.printf("Current points: %lu\n", *pointPTR);
             projectile->RandStart();
         }
     }

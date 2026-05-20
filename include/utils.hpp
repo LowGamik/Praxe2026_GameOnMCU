@@ -4,7 +4,9 @@
 //encoder a is fucking clock
 //encoder b is fucking data
 //encoder sw is fucking button
-
+/**
+ * defines
+ */
 #define DATA_PIN 14
 #define CLOCK_PIN 27
 #define SELECT_PIN 26
@@ -80,8 +82,9 @@ void testDisplay(MATRIX7219* display);
  * @param movY -1, 0 or 1 depending on the direction of movement
  * @param level 1-10 depending on the difficulty level, determines the speed of the projectile
  * @param switchState - state of the switch
+ * @param pointPTR - pointer to the points variable
  */
-void displayGame(MATRIX7219* display, Cursor* cursor, Projectile* projectile, MyTimer *timer, int movX, int movY, int level = 1, int switchState = 0);
+void displayGame(MATRIX7219* display, Cursor* cursor, Projectile* projectile, MyTimer *timer, int movX, int movY, unsigned long *pointPTR, int level = 1, int switchState = 0);
 DirState intToDirState(int number);
 
 #endif // UTILS_HPP

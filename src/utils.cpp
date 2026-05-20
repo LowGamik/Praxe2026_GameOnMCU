@@ -31,10 +31,20 @@ int Cursor::getYPos() {
     return yPos;
 }
 
-void displayGame(MATRIX7219* display, Cursor* cursor, int movX, int movY) {
+void displayGame(MATRIX7219* display, Cursor* cursor, Projectile* projectile, MyTimer *timer, int movX, int movY, int level, int switchState) {
+    static MyTimer moveTimer;
     int positions[8][8] = {0};
-    int newX = cursor->getXPos() + movX;
-    int newY = cursor->getYPos() + movY;
+    static int newX = 0;
+    static int newY = 0;
+
+    if(movX != 0 || movY != 0) {
+        if (moveTimer.hasTimePassed(100))
+        {
+            newX = cursor->getXPos() + movX;
+            newY = cursor->getYPos() + movY;
+        }
+    }
+
     if(newX < 1) {
         newX = 1;
     }else if(newX > 6) {
@@ -45,13 +55,25 @@ void displayGame(MATRIX7219* display, Cursor* cursor, int movX, int movY) {
     }else if(newY > 6) {
         newY = 6;
     }
+    
+    if(timer->hasTimePassed(1000/level)) {
+        projectile->move();
+    }
+
+    if(projectile->getXPos() >= 8) {
+        projectile->setXPos(0);
+    }
+    positions[projectile->getYPos()][projectile->getXPos()] = 1;
+
     cursor->setXPos(newX);
     cursor->setYPos(newY);
     display->clear();
-    positions[cursor->getYPos()+1][cursor->getXPos()] = 1;
-    positions[cursor->getYPos()-1][cursor->getXPos()] = 1;
-    positions[cursor->getYPos()][cursor->getXPos()-1] = 1;
-    positions[cursor->getYPos()][cursor->getXPos()+1] = 1;
+    positions[cursor->getYPos()+1][cursor->getXPos()] = !positions[cursor->getYPos()+1][cursor->getXPos()];
+    positions[cursor->getYPos()-1][cursor->getXPos()] = !positions[cursor->getYPos()-1][cursor->getXPos()];
+    positions[cursor->getYPos()][cursor->getXPos()-1] = !positions[cursor->getYPos()][cursor->getXPos()-1];
+    positions[cursor->getYPos()][cursor->getXPos()+1] = !positions[cursor->getYPos()][cursor->getXPos()+1];
+    
+
     for(int i = 0; i < 8; i++) {
         int rowValue = 0;
         for(int j = 0; j < 8; j++) {
@@ -59,9 +81,12 @@ void displayGame(MATRIX7219* display, Cursor* cursor, int movX, int movY) {
         }
         display->setRow(i + 1, rowValue, 1);
     }
-    /*display->setRow(cursor->getYPos(), 1 << (7 - cursor->getXPos()), 1);
-    display->setRow(cursor->getYPos()+2, 1 << (7 - cursor->getXPos()), 1);
-    display->setRow(cursor->getYPos()+1, 101 << (6 - cursor->getXPos()), 1);*/
+
+    if(switchState == 1) {
+       if(cursor->getXPos() == projectile->getXPos() && cursor->getYPos() == projectile->getYPos()) {
+            Serial.println("Hit!");
+        }
+    }
 }
 
 MyTimer::MyTimer() {
@@ -77,3 +102,27 @@ bool MyTimer::hasTimePassed(unsigned long time) {
         return false;
     }
 }
+
+Projectile::Projectile(int x, int y/*DirState dir*/) {
+    xPos = x;
+    yPos = y;
+    //this->dir = dir;
+}
+
+int Projectile::getXPos() {
+    return xPos;
+}
+
+int Projectile::getYPos() {
+    return yPos;
+}
+
+void Projectile::move() {
+    xPos += xDir;
+    //yPos += yDir;
+}
+
+void Projectile::setXPos(int xDir) {
+    this->xPos = xDir;
+}
+

@@ -8,6 +8,8 @@ Cursor cursor;
 MATRIX7219 display(DATA_PIN, SELECT_PIN, CLOCK_PIN, NUM_DEVICES);
 RotaryEncoder encoder(ENCODE_DATA_PIN, ENCODE_CLOCK_PIN);
 Joystick joystick(JOYSTICK_X, JOYSTICK_Y, JOYSTICK_SW);
+Projectile projectile(0,3);
+MyTimer timer;
 void displaySetup();
 void encoderSetup();
 
@@ -23,13 +25,13 @@ void setup() {
 void loop() {
   joystick.update();
   //Serial.printf("X: %d, Y: %d, SW: %d\n", joystick.getX(), joystick.getY(), joystick.getSW());
-  displayCursor(&display, &cursor, joystick.getX(), joystick.getY());
+  displayGame(&display, &cursor, &projectile, &timer, joystick.getX(), joystick.getY(), encoder.getEncoderValue(), joystick.getSW());
   if(digitalRead(BUTTON_PIN)==0){
     digitalWrite(BUZZ_PIN, 1);
   }else{
     digitalWrite(BUZZ_PIN, 0);
   }
-  delay(100);
+  delay(25);
 }
 
 void displaySetup() {

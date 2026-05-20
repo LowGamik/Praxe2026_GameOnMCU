@@ -17,6 +17,14 @@
 #define JOYSTICK_X 34
 #define JOYSTICK_Y 35
 
+enum DirState{
+    UP,
+    DOWN,
+    LEFT,
+    RIGHT,
+    NONE
+};
+
 class Cursor{
     private:
         int xPos;
@@ -33,8 +41,16 @@ class Projectile{
     private:
         int xPos;
         int yPos;
+        int xDir = 1;
+        //int yDir;
+        //DirState dir;
     public:
-        Projectile(int x = 0, int y = 0);
+        Projectile(int x = 0, int y = 0/*DirState dir = NONE*/);
+        int getXPos();
+        int getYPos();
+        void setXPos(int xDir);
+        //void setYDir(int yDir);
+        void move();
 };
 
 class MyTimer{
@@ -46,6 +62,14 @@ class MyTimer{
 };
 
 void testDisplay(MATRIX7219* display);
-void displayGame(MATRIX7219* display, Cursor* cursor, int movX, int movY);
+/**¨
+ * @param display - pointer to the display object
+ * @param cursor - pointer to the cursor object
+ * @param movX -1, 0 or 1 depending on the direction of movement
+ * @param movY -1, 0 or 1 depending on the direction of movement
+ * @param level 1-10 depending on the difficulty level, determines the speed of the projectile
+ * 
+ */
+void displayGame(MATRIX7219* display, Cursor* cursor, Projectile* projectile, MyTimer *timer, int movX, int movY, int level = 1, int switchState = 0);
 
 #endif // UTILS_HPP

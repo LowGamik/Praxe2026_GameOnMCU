@@ -219,3 +219,9 @@ void resetDisplay(MATRIX7219* display){
         delay(100);
     }
 }
+
+void testBuzzer(){
+    digitalWrite(BUZZ_PIN, HIGH);
+    delay(200);
+    digitalWrite(BUZZ_PIN, LOW);
+}

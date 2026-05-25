@@ -75,6 +75,7 @@ class MyTimer{
  * @param display - pointer to the display object
  */
 void testDisplay(MATRIX7219* display);
+void testBuzzer();
 /**
  * @param display - pointer to the display object
  * @param cursor - pointer to the cursor object
@@ -87,5 +88,4 @@ void testDisplay(MATRIX7219* display);
 void displayGame(MATRIX7219* display, Cursor* cursor, Projectile* projectile, MyTimer *timer, int movX, int movY, unsigned long *pointPTR, int level = 1, int switchState = 0);
 void resetDisplay(MATRIX7219* display);
 DirState intToDirState(int number);
-
 #endif // UTILS_HPP

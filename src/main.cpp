@@ -12,7 +12,7 @@ Projectile projectile(0,3);
 MyTimer timer;
 MyTimer mainTimer;
 
-const unsigned long GAME_DURATION_MS = 15000UL; // 15 seconds for testing; change to 120000UL for 2 minutes
+const unsigned long GAME_DURATION_MS = 90000UL; // 15 seconds for testing; change to 120000UL for 2 minutes
 long level = 1;
 bool gameRunning = false;
 
@@ -24,6 +24,7 @@ unsigned long points = 0;
 void setup() {
   Serial.begin(9600);
   pinMode(JOYSTICK_SW, INPUT_PULLUP);
+  pinMode(ENCODE_SW_PIN, INPUT_PULLUP);
   pinMode(BUZZ_PIN, OUTPUT);
   displaySetup();
   encoderSetup();
@@ -85,11 +86,11 @@ void encoderSetup() {
     //Serial.println("\033[2J");
     //Serial.printf("Pressed :3\n");
     static unsigned long lastPress = 0;
-    const unsigned long DEBOUNCE_MS = 80;
+    const unsigned long DEBOUNCE_MS = 100;
     unsigned long now = millis();
     if (now - lastPress < DEBOUNCE_MS) return;
     lastPress = now;
-    if(duration > 200){
+    if (duration >= 200) {
       gameRunning = true;
     }
   });

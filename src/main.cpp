@@ -51,6 +51,7 @@ void loop() {
       digitalWrite(BUZZ_PIN, LOW);
       resetDisplay(&display);
       gameRunning = false;
+      Serial.println("\033[2J");
       Serial.println("SKONCIL JSI!");
       Serial.printf("BODY: %lu\n", points);
       points = 0;

@@ -11,10 +11,10 @@
 #define CLOCK_PIN 27
 #define SELECT_PIN 26
 #define NUM_DEVICES 1
-#define BUTTON_PIN 32
 #define BUZZ_PIN 22
 #define ENCODE_CLOCK_PIN 5
 #define ENCODE_DATA_PIN 18
+#define ENCODE_SW_PIN 19
 #define JOYSTICK_SW 32
 #define JOYSTICK_X 34
 #define JOYSTICK_Y 35
@@ -66,7 +66,7 @@ class Projectile{
  */
 class MyTimer{
     private:
-        unsigned long timeOfChange;
+        unsigned long timeOfChange = 0;
     public:
         MyTimer();
         bool hasTimePassed(unsigned long time);
@@ -85,6 +85,7 @@ void testDisplay(MATRIX7219* display);
  * @param pointPTR - pointer to the points variable
  */
 void displayGame(MATRIX7219* display, Cursor* cursor, Projectile* projectile, MyTimer *timer, int movX, int movY, unsigned long *pointPTR, int level = 1, int switchState = 0);
+void resetDisplay(MATRIX7219* display);
 DirState intToDirState(int number);
 
 #endif // UTILS_HPP

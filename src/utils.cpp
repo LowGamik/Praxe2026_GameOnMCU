@@ -81,10 +81,10 @@ void displayGame(MATRIX7219* display, Cursor* cursor, Projectile* projectile, My
 
     if(switchState == 1) {
        if(cursor->getXPos() == projectile->getXPos() && cursor->getYPos() == projectile->getYPos()) {
-            Serial.println("\033[2J"); // Clear console
-            Serial.println("Hit!");
+            //Serial.println("\033[2J"); // Clear console
+            //Serial.println("Hit!");
             (*pointPTR)++;
-            Serial.printf("Current points: %lu\n", *pointPTR);
+            //Serial.printf("Current points: %lu\n", *pointPTR);
             projectile->RandStart();
         }
     }
@@ -96,11 +96,11 @@ MyTimer::MyTimer() {
 
 bool MyTimer::hasTimePassed(unsigned long time) {
     if(this->timeOfChange == 0) this->timeOfChange = millis() + time;
-    if(millis() >= this->timeOfChange) {
+    if(millis() < this->timeOfChange) {
+        return false;
+    }else {
         this->timeOfChange = 0;
         return true;
-    }else {
-        return false;
     }
 }
 
@@ -198,5 +198,24 @@ DirState intToDirState(int number){
         case 2: return LEFT;
         case 3: return RIGHT;
         default: return NONE;
+    }
+}
+
+void resetDisplay(MATRIX7219* display){
+    
+
+
+    for(int i = 1; i <= 8; i++){
+        display->setRow(i,0,1);
+    }
+
+    for(int i = 1; i <= 8; i++){
+        display->setRow(i,255,1);
+        delay(100);
+    }
+
+    for(int i = 1; i <= 8; i++){
+        display->setRow(i,0,1);
+        delay(100);
     }
 }

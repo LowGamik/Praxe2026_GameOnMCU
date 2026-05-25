@@ -35,6 +35,7 @@ void setup() {
   pinMode(BUZZ_PIN, OUTPUT); // Nastavení bzučáku jako výstup
   displaySetup(); // Inicializace LED matice
   encoderSetup(); // Inicializace rotačního enkodéru
+  testBuzzer(); // Test Buzzeru
   testDisplay(&display); // Test displeje - sekvence rozsvícení řádků
   projectile.RandStart(); // Nastavení projektilu na náhodnou pozici
 }

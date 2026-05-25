@@ -4,7 +4,10 @@
 #include <Joystick.hpp>
 #include "utils.hpp"
 
-Cursor cursor;
+//========================================
+// Deklarace proměnných - inicializace všech objektů a proměnných pro hru
+//========================================
+Cursor cursor; // Objekt reprezentující pozici kurzoru (hráčův avatar)
 MATRIX7219 display(DATA_PIN, SELECT_PIN, CLOCK_PIN, NUM_DEVICES);
 RotaryEncoder encoder(ENCODE_DATA_PIN, ENCODE_CLOCK_PIN, ENCODE_SW_PIN);
 Joystick joystick(JOYSTICK_X, JOYSTICK_Y, JOYSTICK_SW);
@@ -12,87 +15,96 @@ Projectile projectile(0,3);
 MyTimer timer;
 MyTimer mainTimer;
 
-const unsigned long GAME_DURATION_MS = 90000UL; // 15 seconds for testing; change to 120000UL for 2 minutes
-long level = 1;
-bool gameRunning = false;
+const unsigned long GAME_DURATION_MS = 90000UL; // Doba trvání jedné hry v milisekundách (90000 = 90 sekund)
+long level = 1; // Aktuální úroveň obtížnosti (1-10)
+bool gameRunning = false; // Příznak určující, zda hra právě běží
+unsigned long points = 0; // Počet nabratých bodů
 
-void displaySetup();
-void encoderSetup();
+//========================================
+// Deklarace funkcí - přední deklarace (forward declarations)
+//========================================
+void displaySetup(); // Inicializace LED matice
+void encoderSetup(); // Inicializace otočného enkodéru
 
-unsigned long points = 0;
-
+//========================================
+// Nastavení a test hardwaru - spouští se pouze jednou při zapnutí
+//========================================
 void setup() {
-  Serial.begin(9600);
-  pinMode(JOYSTICK_SW, INPUT_PULLUP);
-  pinMode(ENCODE_SW_PIN, INPUT_PULLUP);
-  pinMode(BUZZ_PIN, OUTPUT);
-  displaySetup();
-  encoderSetup();
-  testDisplay(&display);
-  projectile.RandStart();
+  Serial.begin(9600); // Inicializace sériové komunikace pro ladění (9600 baudů)
+  pinMode(JOYSTICK_SW, INPUT_PULLUP); // Nastavení tlačítka joysticku jako vstup s vnitřním pull-up odporem
+  pinMode(BUZZ_PIN, OUTPUT); // Nastavení bzučáku jako výstup
+  displaySetup(); // Inicializace LED matice
+  encoderSetup(); // Inicializace rotačního enkodéru
+  testDisplay(&display); // Test displeje - sekvence rozsvícení řádků
+  projectile.RandStart(); // Nastavení projektilu na náhodnou pozici
 }
 
+
+//========================================
+// Hlavní cyklus - běží stále dokola
+//========================================
 void loop() {
-  joystick.update();
+  joystick.update(); // Přečtení aktuálních hodnot z joysticku
   
-  if(!gameRunning){
-    level = encoder.getEncoderValue();
-    //Serial.printf("%ld\n", level);
+  // Nastavení obtížnosti a zapnutí hry - spustí se, když hra neběží
+  if(!gameRunning){ // Pokud hra v tuto chvíli neběží
+    level = encoder.getEncoderValue(); // Přečtení nastavené obtížnosti z enkodéru (1-10)
+    if(joystick.getSW()) gameRunning = true; // Pokud je tlačítko joysticku stisknuto, hra se spustí
   }
 
-  if(gameRunning){
-    displayGame(&display, &cursor, &projectile, &timer, joystick.getX(), joystick.getY(), &points, level, joystick.getSW());
-    if(digitalRead(JOYSTICK_SW) == 0){
-      digitalWrite(BUZZ_PIN, HIGH);
+  // Herní cyklus - běží, když je hra spuštěná
+  if(gameRunning){ // Pokud hra právě běží
+    displayGame(&display, &cursor, &projectile, &timer, joystick.getX(), joystick.getY(), &points, level, joystick.getSW()); // Aktualizace a vykreslení herního obsahu
+    if(digitalRead(JOYSTICK_SW) == 0){ // Pokud je tlačítko joysticku stisknuto (tlačítko má aktivní nízkou úroveň)
+      digitalWrite(BUZZ_PIN, HIGH); // Zapnutí bzučáku
     } else {
-      digitalWrite(BUZZ_PIN, LOW);
+      digitalWrite(BUZZ_PIN, LOW); // Vypnutí bzučáku
     }
 
-    if(mainTimer.hasTimePassed(GAME_DURATION_MS)){
-      digitalWrite(BUZZ_PIN, LOW);
-      resetDisplay(&display);
-      gameRunning = false;
-      Serial.println("\033[2J");
-      Serial.println("SKONCIL JSI!");
-      Serial.printf("BODY: %lu\n", points);
-      points = 0;
+    // Kontrola vypršení doby trvání hry
+    if(mainTimer.hasTimePassed(GAME_DURATION_MS)){ // Pokud uplynul čas hry (90 sekund)
+      digitalWrite(BUZZ_PIN, LOW); // Vypnutí bzučáku
+      resetDisplay(&display); // Krásné vypnutí displeje (animace)
+      gameRunning = false; // Zastavení hry
+      Serial.println("\033[2J"); // Vymazání sériové konzole
+      Serial.println("SKONCIL JSI!"); // Zpráva na konzolu
+      Serial.printf("BODY: %lu\n", points); // Výpis dosažených bodů
+      points = 0; // Reset bodů pro další hru
     }
   }
 
   delay(25);
 }
 
+//========================================
+// Definice funkcí - detailní implementace
+//========================================
+
+/**
+ * Inicializace LED matice (display)
+ */
 void displaySetup() {
-  display.begin();
-  display.clear();
-  display.displayOn();
-  //display.setSwap(true);
-  display.setBrightness(1);
+  display.begin(); // Inicializace komunikace s maticí
+  display.clear(); // Smazání obsahu displeje
+  display.displayOn(); // Zapnutí displeje
+  //display.setSwap(true); // Možnost obrácení obrazu (není potřeba)
+  display.setBrightness(1); // Nastavení minimální jasu (1-15)
 }
 
+/**
+ * Inicializace rotačního enkodéru pro nastavení obtížnosti
+ */
 void encoderSetup() {
-  encoder.setEncoderType(EncoderType::HAS_PULLUP);
-  encoder.setBoundaries(1, 10, true);
-  encoder.onTurned( [](long value) {
-    static unsigned long lastTurn = 0;
-    const unsigned long DEBOUNCE_MS = 5;
-    unsigned long now = millis();
-    if (now - lastTurn < DEBOUNCE_MS) return;
-    lastTurn = now;
-    Serial.println("\033[2J");
-    Serial.printf("Current difficulty: %ld\n", value);
+  encoder.setEncoderType(EncoderType::HAS_PULLUP); // Nastavení typu enkodéru (má vnitřní pull-up odpory)
+  encoder.setBoundaries(1, 10, true); // Nastavení rozsahu hodnot: minimálně 1, maximálně 10, cyklický
+  encoder.onTurned( [](long value) { // Callback funkce při otočení enkodéru
+    static unsigned long lastTurn = 0; // Čas poslední rotace
+    const unsigned long DEBOUNCE_MS = 5; // Minimální čas mezi registracemi rotací (protidrgání)
+    unsigned long now = millis(); // Aktuální čas v milisekundách
+    if (now - lastTurn < DEBOUNCE_MS) return; // Pokud byl čas mezi rotacemi příliš krátký, ignoruj
+    lastTurn = now; // Aktualizuj čas poslední rotace
+    Serial.println("\033[2J"); // Vymaž sériovou konzolu
+    Serial.printf("Current difficulty: %ld\n", value); // Vytiskni aktuální obtížnost na konzolu
   });
-  encoder.onPressed([](unsigned long duration){
-    //Serial.println("\033[2J");
-    //Serial.printf("Pressed :3\n");
-    static unsigned long lastPress = 0;
-    const unsigned long DEBOUNCE_MS = 100;
-    unsigned long now = millis();
-    if (now - lastPress < DEBOUNCE_MS) return;
-    lastPress = now;
-    if (duration >= 200) {
-      gameRunning = true;
-    }
-  });
-  encoder.begin();
+  encoder.begin(); // Spuštění enkodéru
 };
